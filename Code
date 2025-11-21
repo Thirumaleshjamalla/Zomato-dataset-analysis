@@ -1,0 +1,73 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+
+
+df = pd.read_csv(r"C:\Users\saipr\Downloads\archive (1)\zomato.csv", encoding='latin1')
+print(df.head())
+
+
+print("----- FIRST 5 ROWS -----")
+print(df.head())
+
+print("\n----- DATASET INFO -----")
+print(df.info())
+
+print("\n----- MISSING VALUES -----")
+print(df.isnull().sum())
+
+
+
+df["rate"] = df["rate"].astype(str)          
+df["rate"] = df["rate"].str.replace("NEW", "")
+df["rate"] = df["rate"].str.replace("-", "")
+df["rate"] = df["rate"].str.replace("/5", "")  
+df["rate"] = pd.to_numeric(df["rate"], errors='coerce')
+
+
+plt.figure(figsize=(8,5))
+df["rate"].dropna().hist(bins=20)
+plt.title("Distribution of Restaurant Ratings")
+plt.xlabel("Rating")
+plt.ylabel("Count")plt.show()
+
+
+plt.figure(figsize=(10,5))
+df["cuisines"].value_counts().head(10).plot(kind="bar")
+plt.title("Top 10 Cuisines")
+plt.xlabel("Cuisines")
+plt.ylabel("Count")
+plt.show()
+
+
+plt.figure(figsize=(6,4))
+df.groupby("online_order")["rate"].mean().plot(kind="bar")
+plt.title("Online Order vs Average Rating")
+plt.ylabel("Average Rating")
+plt.xlabel("Online Order (Yes/No)")
+plt.show()
+
+
+df["approx_cost(for two people)"] = (
+    df["approx_cost(for two people)"]
+    .astype(str)
+    .str.replace(",", "")
+)
+
+df["approx_cost(for two people)"] = pd.to_numeric(
+    df["approx_cost(for two people)"], errors="coerce"
+)
+
+plt.figure(figsize=(8,5))
+df["approx_cost(for two people)"].dropna().hist(bins=20)
+plt.title("Cost for Two People Distribution")
+plt.xlabel("Cost (₹)")
+plt.ylabel("Count")
+plt.show()
+
+
+plt.figure(figsize=(10,5))
+df["location"].value_counts().head(10).plot(kind="bar")
+plt.title("Top 10 Locations with Most Restaurants")
+plt.xlabel("Location")
+plt.ylabel("Count")
+plt.show()
